@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <!-- Our CSS -->
+    <link rel="stylesheet" href="../css/main.css">
+
+    <title>Hello, world!</title>
+  </head>
+  <body>
+
+    <!-- Main Container -->
+    <div class="grid-container main-container">
+
+      <!-- Heading Conatiner -->
+      <div class="flex-container heading-container margin-left-210px">
+        <div class="heading">
+          <h1>Virtual Memory Visualizer</h1>
+        </div>
+      </div>
+
+      <!-- Content Container -->
+      <div class="grid-container content-container">
+
+        <!-- Menu Container -->
+        <div class="flex-container menu-container flex-column">
+          <div class="settings-heading flex-container center">
+            <h4>Settings</h4>
+          </div>
+
+          <div class="settings-container">
+
+            <div class="sidenav">
+
+              <button class="dropdown-btn caret">Control
+                <i class="fa fa-caret-down"></i>
+              </button>
+
+              <div class="dropdown-container">
+
+                <div class="btn-group btn-group-toggle flex-container flex-column" data-toggle="buttons">
+                  <label class="btn btn-secondary dropdown-items active">
+                    <input type="radio" name="options" id="option2" autocomplete="off"> Paging
+                  </label>
+                  <label class="btn btn-secondary dropdown-items">
+                    <input type="radio" name="options" id="option3" autocomplete="off"> Segmentation
+                  </label>
+                </div>
+
+              </div>
+
+              <button class="dropdown-btn caret">Page Replacement
+                <i class="fa fa-caret-down"></i>
+              </button>
+
+              <div class="dropdown-container">
+                <div class="btn-group btn-group-toggle flex-container flex-column" data-toggle="buttons">
+                  <label class="btn btn-secondary dropdown-items active">
+                    <input type="radio" name="options" id="option2" autocomplete="off"> OPT
+                  </label>
+                  <label class="btn btn-secondary dropdown-items">
+                    <input type="radio" name="options" id="option3" autocomplete="off"> LRU
+                  </label>
+                  <label class="btn btn-secondary dropdown-items">
+                    <input type="radio" name="options" id="option2" autocomplete="off"> FIFO
+                  </label>
+                  <label class="btn btn-secondary dropdown-items">
+                    <input type="radio" name="options" id="option2" autocomplete="off"> CLOCK
+                  </label>
+                </div>
+              </div>
+
+              <button class="dropdown-btn caret">Program List
+                <i class="fa fa-caret-down"></i>
+              </button>
+
+              <div class="dropdown-container">
+                <a>Game</a>
+                <a>Spreadsheet</a>
+                <a>Word Processor</a>
+              </div>
+
+              <a href="#">Active Programs</a>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Workspace Container -->
+        <div class="flex-container workspace-container">
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- sidebar script -->
+    <script src="../js/sidebar.js"></script>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  </body>
+</html>
