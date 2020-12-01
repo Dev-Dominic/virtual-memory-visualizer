@@ -33,10 +33,11 @@ class BasicMemory {
 
   // Remove entry from specifc memory location
   remove(index) {
-    if (this.memory[index]) return 0;
+    if (!this.memory[index]) return 0;
 
+    const page = this.memory[index];
     this.memory[index] = null;
-    return 1;
+    return page;
   }
 
   // Get Current state of memory
@@ -45,17 +46,18 @@ class BasicMemory {
   }
 }
 
-function loadingProgram(
+function loadingProgram({
   MainMemory,
   mainMemorySize,
   Swap,
   TLB,
+  pageCache,
   eventList,
   programList,
-  pageSize
-) {
+  pageSize,
+}) {
   // Loading Programs into random parts of memory
-  let pageCount = 1;
+  let pageCount = 0;
   let newEventList = [...eventList];
   programList.forEach((program, index) => {
     let pageNo = Math.ceil(program.length / Number(pageSize));
@@ -98,6 +100,7 @@ function loadingProgram(
         mainMemory: MainMemory.getMemoryState().slice(),
         tlb: TLB.getMemoryState().slice(),
         swap: Swap.getMemoryState().slice(),
+        pageCache: pageCache.getMemoryState().slice(),
       });
     }
   });
@@ -112,6 +115,7 @@ function FIFO(
   mainMemorySize,
   SwapSize,
   TLBSize,
+  pageCacheSize,
   pageSize
 ) {
   if (programList.length < 2) return "Enter Bigger ProgramList";
@@ -124,19 +128,67 @@ function FIFO(
   const MainMemory = new BasicMemory(mainMemorySize); // RAM with 4Gigs
   const Swap = new BasicMemory(SwapSize); // HardDisk swap
   const TLB = new BasicMemory(TLBSize); // Translation Lookaside Buffer
+  const pageCache = new BasicMemory(pageCacheSize);
+  let pageCachePointer = 0;
   let eventList = []; // Stores list of events
 
   // Page Table
   MainMemory.add([{}], 0);
-  eventList = loadingProgram(
+  eventList.push({
+    mainMemory: MainMemory.getMemoryState().slice(),
+    tlb: TLB.getMemoryState().slice(),
+    swap: Swap.getMemoryState().slice(),
+    pageCache: pageCache.getMemoryState().slice(),
+  });
+
+  eventList = loadingProgram({
     MainMemory,
     mainMemorySize,
     Swap,
+    pageCache,
     TLB,
     eventList,
     programList,
-    pageSize
-  );
+    pageSize,
+  });
+
+  // Simulating CPU fetching for page
+  executionList.forEach((execute) => {
+    if (pageCachePointer === 0 && pageCache.find(0)) {
+      console.log("present");
+      console.log("need to overwrite");
+    } else {
+      const memLocation = MainMemory.find(0)[execute];
+
+      // Removing page from Main Memory
+      let page = MainMemory.remove(memLocation);
+
+      // Checking swap
+      if (!page) {
+        page = Swap.remove(memLocation);
+        if (!page) return;
+      }
+
+      eventList.push({
+        mainMemory: MainMemory.getMemoryState().slice(),
+        tlb: TLB.getMemoryState().slice(),
+        swap: Swap.getMemoryState().slice(),
+        pageCache: pageCache.getMemoryState().slice(),
+      });
+
+      // Adding page to Page Cache
+      pageCache.add([page], pageCachePointer);
+      pageCachePointer =
+        pageCachePointer + 1 >= pageCacheSize ? 0 : pageCachePointer + 1;
+      eventList.push({
+        mainMemory: MainMemory.getMemoryState().slice(),
+        tlb: TLB.getMemoryState().slice(),
+        swap: Swap.getMemoryState().slice(),
+        pageCache: pageCache.getMemoryState().slice(),
+      });
+    }
+  });
+
   return eventList;
 }
 
@@ -151,9 +203,7 @@ const programTest = [
   ["s1", "s2", "s3"],
 ];
 
-const executionList = [];
+const executionList = ["P6-0", "P6-1", "P0-1", "PO-0"];
 
-console.log(FIFO(programTest, executionList, 2, 10, 20, 5, 3));
+console.log(FIFO(programTest, executionList, 2, 5, 20, 5, 3, 3));
 //FIFO(programTest, executionList, 2, 10, 20, 5, 3);
-
-export { FIFO };
