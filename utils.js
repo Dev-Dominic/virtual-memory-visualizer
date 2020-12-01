@@ -176,7 +176,6 @@ function FIFO(
         [execute]: queuePointer,
         [pageAssoc]: memLocation,
       };
-      console.log(PageTable);
       MainMemory.add([PageTable], 0);
 
       eventList.push({
@@ -198,7 +197,6 @@ function FIFO(
       });
 
       queuePointer = queuePointer >= mainMemorySize ? 1 : queuePointer + 1;
-      console.log(queuePointer);
     }
 
     eventList.push({
