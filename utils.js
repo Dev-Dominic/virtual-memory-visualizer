@@ -114,8 +114,6 @@ function FIFO(
         swap: Swap.getMemoryState().slice(),
       });
     }
-
-    //console.log(MainMemory.getMemoryState());
   });
 
   return eventList;
@@ -134,7 +132,7 @@ const programTest = [
 
 const executionList = [];
 
-console.log(FIFO(programTest, executionList, 2, 10, 20, 5, 3));
-//FIFO(programTest, executionList, 2, 10, 20, 5, 3);
+//console.log(FIFO(programTest, executionList, 2, 10, 20, 5, 3));
+FIFO(programTest, executionList, 2, 10, 20, 5, 3);
 
-//export { FIFO };
+export { FIFO };
