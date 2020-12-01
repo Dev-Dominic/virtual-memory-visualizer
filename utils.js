@@ -57,7 +57,7 @@ function loadingProgram({
   pageSize,
 }) {
   // Loading Programs into random parts of memory
-  let pageCount = 0;
+  let pageCount = 1;
   let newEventList = [...eventList];
   programList.forEach((program, index) => {
     let pageNo = Math.ceil(program.length / Number(pageSize));
@@ -78,14 +78,7 @@ function loadingProgram({
         pageCount += 1;
         start += pageSize;
       } else {
-        if (i === pageNo) {
-          const lastPage = MainMemory.find(pageCount - 1);
-          MainMemory.add([[...lastPage, null]], pageCount - 1);
-          continue;
-        } else {
-          MainMemory.add([program.slice(start, start + pageSize)], pageCount);
-          pageCount += 1;
-        }
+        MainMemory.add([program.slice(start, start + pageSize)], pageCount);
 
         //  Updating Page Table
         const PageTable = {
@@ -94,6 +87,7 @@ function loadingProgram({
         };
         MainMemory.add([PageTable], 0);
         start += pageSize;
+        pageCount += 1;
       }
 
       newEventList.push({
@@ -111,7 +105,6 @@ function loadingProgram({
 function FIFO(
   programList,
   executionList,
-  chunkSizeMax,
   mainMemorySize,
   SwapSize,
   TLBSize,
@@ -120,20 +113,23 @@ function FIFO(
 ) {
   if (programList.length < 2) return "Enter Bigger ProgramList";
   if (pageSize > mainMemorySize)
-    return "Page Size should be larger than Main Memory Size";
+    return "Main Memory Size should be larger than Page Size";
   if (mainMemorySize > SwapSize)
-    return "Main Memory Size should be bigger than swap size";
+    return "Swap Size should be bigger than mainMemory size";
 
   // programList contains list of programs with their executing instructions
-  const MainMemory = new BasicMemory(mainMemorySize); // RAM with 4Gigs
+  const MainMemory = new BasicMemory(mainMemorySize + 1); // RAM with 4Gigs
   const Swap = new BasicMemory(SwapSize); // HardDisk swap
   const TLB = new BasicMemory(TLBSize); // Translation Lookaside Buffer
-  const pageCache = new BasicMemory(pageCacheSize);
-  let pageCachePointer = 0;
+  const pageCache = new BasicMemory(pageCacheSize + 1);
+  let pageCachePointer = 1;
+  let TLBPointer = 0;
+  let queuePointer = 1;
   let eventList = []; // Stores list of events
 
   // Page Table
   MainMemory.add([{}], 0);
+  pageCache.add([[]], 0);
   eventList.push({
     mainMemory: MainMemory.getMemoryState().slice(),
     tlb: TLB.getMemoryState().slice(),
@@ -143,7 +139,7 @@ function FIFO(
 
   eventList = loadingProgram({
     MainMemory,
-    mainMemorySize,
+    mainMemorySize: mainMemorySize + 1,
     Swap,
     pageCache,
     TLB,
@@ -154,39 +150,100 @@ function FIFO(
 
   // Simulating CPU fetching for page
   executionList.forEach((execute) => {
-    if (pageCachePointer === 0 && pageCache.find(0)) {
-      console.log("present");
-      console.log("need to overwrite");
-    } else {
-      const memLocation = MainMemory.find(0)[execute];
-
-      // Removing page from Main Memory
-      let page = MainMemory.remove(memLocation);
-
-      // Checking swap
-      if (!page) {
-        page = Swap.remove(memLocation);
-        if (!page) return;
-      }
-
-      eventList.push({
-        mainMemory: MainMemory.getMemoryState().slice(),
-        tlb: TLB.getMemoryState().slice(),
-        swap: Swap.getMemoryState().slice(),
-        pageCache: pageCache.getMemoryState().slice(),
-      });
-
-      // Adding page to Page Cache
-      pageCache.add([page], pageCachePointer);
-      pageCachePointer =
-        pageCachePointer + 1 >= pageCacheSize ? 0 : pageCachePointer + 1;
-      eventList.push({
-        mainMemory: MainMemory.getMemoryState().slice(),
-        tlb: TLB.getMemoryState().slice(),
-        swap: Swap.getMemoryState().slice(),
-        pageCache: pageCache.getMemoryState().slice(),
-      });
+    // Checking pageCache for given page
+    if (pageCache.find(0).includes(execute)) {
+      console.log(`${execute} Present in Page Cache`);
+      return;
     }
+
+    const memLocation = MainMemory.find(0)[execute];
+
+    // Removing page from Main Memory
+    let page = MainMemory.find(memLocation);
+
+    // Checking swap
+    if (!page) {
+      page = Swap.find(memLocation);
+      if (!page) return;
+
+      //  Updating Page Table
+      let PageTable = MainMemory.find(0);
+      const pageAssoc = Object.keys(PageTable).filter(
+        (key) => PageTable[key] === queuePointer
+      )[0];
+      PageTable = {
+        ...MainMemory.find(0),
+        [execute]: queuePointer,
+        [pageAssoc]: memLocation,
+      };
+      console.log(PageTable);
+      MainMemory.add([PageTable], 0);
+
+      eventList.push({
+        mainMemory: MainMemory.getMemoryState().slice(),
+        tlb: TLB.getMemoryState().slice(),
+        swap: Swap.getMemoryState().slice(),
+        pageCache: pageCache.getMemoryState().slice(),
+      });
+
+      let replace = MainMemory.remove(queuePointer);
+      Swap.add([replace], memLocation);
+      MainMemory.add([page], queuePointer);
+
+      eventList.push({
+        mainMemory: MainMemory.getMemoryState().slice(),
+        tlb: TLB.getMemoryState().slice(),
+        swap: Swap.getMemoryState().slice(),
+        pageCache: pageCache.getMemoryState().slice(),
+      });
+
+      queuePointer = queuePointer >= mainMemorySize ? 1 : queuePointer + 1;
+      console.log(queuePointer);
+    }
+
+    eventList.push({
+      mainMemory: MainMemory.getMemoryState().slice(),
+      tlb: TLB.getMemoryState().slice(),
+      swap: Swap.getMemoryState().slice(),
+      pageCache: pageCache.getMemoryState().slice(),
+    });
+
+    // Adding page to Page Cache
+    pageCache.add([page], pageCachePointer);
+    let addresses = [...pageCache.find(0)];
+    addresses[pageCachePointer - 1] = execute;
+    pageCache.add([addresses], 0);
+
+    pageCachePointer =
+      pageCachePointer + 1 >= pageCacheSize + 1 ? 1 : pageCachePointer + 1;
+
+    eventList.push({
+      mainMemory: MainMemory.getMemoryState().slice(),
+      tlb: TLB.getMemoryState().slice(),
+      swap: Swap.getMemoryState().slice(),
+      pageCache: pageCache.getMemoryState().slice(),
+    });
+
+    // Adding Page Frame Location to TLB
+    TLB.add([{ pageNumber: execute, frameNumber: memLocation }], TLBPointer);
+    eventList.push({
+      mainMemory: MainMemory.getMemoryState().slice(),
+      tlb: TLB.getMemoryState().slice(),
+      swap: Swap.getMemoryState().slice(),
+      pageCache: pageCache.getMemoryState().slice(),
+    });
+    TLBPointer = TLBPointer >= TLBSize - 1 ? 0 : TLBPointer + 1;
+
+    console.log(`Getting: ${execute}`);
+
+    console.log("Main Memory");
+    console.log(MainMemory.getMemoryState());
+
+    console.log("Page Cache");
+    console.log(pageCache.getMemoryState());
+
+    console.log("TLB");
+    console.log(TLB.getMemoryState());
   });
 
   return eventList;
@@ -203,7 +260,29 @@ const programTest = [
   ["s1", "s2", "s3"],
 ];
 
-const executionList = ["P6-0", "P6-1", "P0-1", "PO-0"];
+const executionList = [
+  "P6-0",
+  "P6-1",
+  "P0-1",
+  "P0-0",
+  "P7-14",
+  "P2-0",
+  "P0-0",
+  "P2-0",
+  "P2-0",
+  "P2-0",
+  "P6-0",
+  "P7-0",
+  "P0-0",
+  "P0-0",
+  "P4-0",
+  "P2-0",
+  "P4-0",
+  "P2-0",
+  "P7-0",
+  "P5-0",
+  "P6-0",
+];
 
-console.log(FIFO(programTest, executionList, 2, 5, 20, 5, 3, 3));
-//FIFO(programTest, executionList, 2, 10, 20, 5, 3);
+//console.log(FIFO(programTest, executionList, 5, 20, 5, 3, 3));
+FIFO(programTest, executionList, 5, 20, 5, 3, 3);
