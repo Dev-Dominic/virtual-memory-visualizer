@@ -70,41 +70,52 @@ function FIFO(
   MainMemory.add([{}], 0);
 
   // Loading Programs into random parts of memory
-  let pageTableOffset = 1;
-  let pageCount = 0;
+  let pageCount = 1;
   programList.forEach((program, index) => {
     let pageNo = Math.ceil(program.length / Number(pageSize));
     let pages = [];
 
     let start = 0;
-    for (let i = 0; i <= pageNo; i++) {
-      if (i === pageNo) {
-        const lastPage = pages[pages.length - 1];
-        pages[pages.length - 1] = [...lastPage, null];
-        break;
-      } else {
-        pages.push(program.slice(start, start + pageSize));
+    for (let i = 0; i < pageNo; i++) {
+      if (MainMemory.find(mainMemorySize - 1)) {
+        Swap.add([program.slice(start, start + pageSize)], pageCount);
+
+        //  Updating Page Table
+        const PageTable = {
+          ...MainMemory.find(0),
+          [`P${index}-${i}`]: pageCount,
+        };
+        MainMemory.add([PageTable], 0);
+
         pageCount += 1;
+        start += pageSize;
+      } else {
+        if (i === pageNo) {
+          const lastPage = MainMemory.find(pageCount - 1);
+          MainMemory.add([[...lastPage, null]], pageCount - 1);
+          continue;
+        } else {
+          MainMemory.add([program.slice(start, start + pageSize)], pageCount);
+          pageCount += 1;
+        }
+
+        //  Updating Page Table
+        const PageTable = {
+          ...MainMemory.find(0),
+          [`P${index}-${i}`]: pageCount,
+        };
+        MainMemory.add([PageTable], 0);
+        start += pageSize;
       }
 
-      //  Updating Page Table
-      const PageTable = {
-        ...MainMemory.find(0),
-        [`P${index}-${i}`]: pageCount,
-      };
-      MainMemory.add([PageTable], 0);
-      start += pageSize;
-
       eventList.push({
-        mainMemory: MainMemory.getMemoryState(),
-        TLB: TLB.getMemoryState(),
-        Swap: Swap.getMemoryState(),
+        mainMemory: MainMemory.getMemoryState().slice(),
+        tlb: TLB.getMemoryState().slice(),
+        swap: Swap.getMemoryState().slice(),
       });
     }
 
-    MainMemory.add(pages, pageTableOffset);
-    console.log(MainMemory.getMemoryState());
-    pageTableOffset += pages.length;
+    //console.log(MainMemory.getMemoryState());
   });
 
   return eventList;
@@ -113,10 +124,17 @@ function FIFO(
 const programTest = [
   ["s1", "s2", "s3", "s4", "s5"],
   ["s1", "s2", "s3"],
+  ["s1", "s2"],
+  ["s1", "s2", "s3"],
+  ["s1", "s2", "s3", "s4"],
+  ["s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8"],
+  ["s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9"],
+  ["s1", "s2", "s3"],
 ];
 
 const executionList = [];
 
 console.log(FIFO(programTest, executionList, 2, 10, 20, 5, 3));
+//FIFO(programTest, executionList, 2, 10, 20, 5, 3);
 
-export { FIFO };
+//export { FIFO };
