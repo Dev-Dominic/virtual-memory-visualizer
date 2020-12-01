@@ -45,32 +45,18 @@ class BasicMemory {
   }
 }
 
-function FIFO(
-  programList,
-  executionList,
-  chunkSizeMax,
+function loadingProgram(
+  MainMemory,
   mainMemorySize,
-  SwapSize,
-  TLBSize,
+  Swap,
+  TLB,
+  eventList,
+  programList,
   pageSize
 ) {
-  if (programList.length < 2) return "Enter Bigger ProgramList";
-  if (pageSize > mainMemorySize)
-    return "Page Size should be larger than Main Memory Size";
-  if (mainMemorySize > SwapSize)
-    return "Main Memory Size should be bigger than swap size";
-
-  // programList contains list of programs with their executing instructions
-  const MainMemory = new BasicMemory(mainMemorySize); // RAM with 4Gigs
-  const Swap = new BasicMemory(SwapSize); // HardDisk swap
-  const TLB = new BasicMemory(TLBSize); // Translation Lookaside Buffer
-  const eventList = []; // Stores list of events
-
-  // Page Table
-  MainMemory.add([{}], 0);
-
   // Loading Programs into random parts of memory
   let pageCount = 1;
+  let newEventList = [...eventList];
   programList.forEach((program, index) => {
     let pageNo = Math.ceil(program.length / Number(pageSize));
     let pages = [];
@@ -108,7 +94,7 @@ function FIFO(
         start += pageSize;
       }
 
-      eventList.push({
+      newEventList.push({
         mainMemory: MainMemory.getMemoryState().slice(),
         tlb: TLB.getMemoryState().slice(),
         swap: Swap.getMemoryState().slice(),
@@ -116,6 +102,41 @@ function FIFO(
     }
   });
 
+  return newEventList;
+}
+
+function FIFO(
+  programList,
+  executionList,
+  chunkSizeMax,
+  mainMemorySize,
+  SwapSize,
+  TLBSize,
+  pageSize
+) {
+  if (programList.length < 2) return "Enter Bigger ProgramList";
+  if (pageSize > mainMemorySize)
+    return "Page Size should be larger than Main Memory Size";
+  if (mainMemorySize > SwapSize)
+    return "Main Memory Size should be bigger than swap size";
+
+  // programList contains list of programs with their executing instructions
+  const MainMemory = new BasicMemory(mainMemorySize); // RAM with 4Gigs
+  const Swap = new BasicMemory(SwapSize); // HardDisk swap
+  const TLB = new BasicMemory(TLBSize); // Translation Lookaside Buffer
+  let eventList = []; // Stores list of events
+
+  // Page Table
+  MainMemory.add([{}], 0);
+  eventList = loadingProgram(
+    MainMemory,
+    mainMemorySize,
+    Swap,
+    TLB,
+    eventList,
+    programList,
+    pageSize
+  );
   return eventList;
 }
 
@@ -132,7 +153,7 @@ const programTest = [
 
 const executionList = [];
 
-//console.log(FIFO(programTest, executionList, 2, 10, 20, 5, 3));
-FIFO(programTest, executionList, 2, 10, 20, 5, 3);
+console.log(FIFO(programTest, executionList, 2, 10, 20, 5, 3));
+//FIFO(programTest, executionList, 2, 10, 20, 5, 3);
 
 export { FIFO };
