@@ -18,14 +18,14 @@
     <!-- Main Container -->
     <div class="grid-container main-container">
 
-      <!-- Heading Conatiner -->
+      <!-- Heading Conatiner ---------------------------------------->
       <div class="flex-container heading-container margin-left-210px">
         <div class="heading">
           <h1>Virtual Memory Visualizer</h1>
         </div>
       </div>
 
-      <!-- Content Container -->
+      <!-- Content Container ---------------------------------------->
       <div class="grid-container content-container">
 
         <!-- Menu Container -->
@@ -38,6 +38,7 @@
 
             <div class="sidenav">
 
+              <!-- Control Dropdown -->
               <button class="dropdown-btn caret">Control
                 <i class="fa fa-caret-down"></i>
               </button>
@@ -55,6 +56,7 @@
 
               </div>
 
+              <!-- Page Replacement Dropdown -->
               <button class="dropdown-btn caret">Page Replacement
                 <i class="fa fa-caret-down"></i>
               </button>
@@ -76,6 +78,7 @@
                 </div>
               </div>
 
+              <!-- Program List Dropdown -->
               <button class="dropdown-btn caret">Program List
                 <i class="fa fa-caret-down"></i>
               </button>
@@ -86,28 +89,83 @@
                 <a>Word Processor</a>
               </div>
 
-              <a href="#">Active Programs</a>
+              <!-- Active Programs List -->
+              <button class="dropdown-btn caret">Active Programs
+                <i class="fa fa-caret-down"></i>
+              </button>
+
+              <div class="dropdown-container">
+                <a>Game</a>
+              </div>
+
+              <!-- Run Configuration button -->
+              <div class="flex-container padding-left-20px">
+                <button type="button" class="btn btn-success button-run"> Run Configuration</button>
+              </div>
+
             </div>
 
           </div>
         </div>
 
         <!-- Workspace Container -->
-        <div class="flex-container workspace-container">
+        <div class="flex-container workspace-container flex-column">
+
+          <!-- Area designated for user feedback -->
+          <div class="feedback-container flex-container">
+
+          </div>
+
+          <!-- Rendering Area -->
+          <div class="rendering-container flex-container">
+
+            <!-- Processes -->
+            <div class="processes-section flex-container flex-grow-1 flex-column center">
+              <div class="process">
+
+              </div>
+            </div>
+
+            <!-- Translation Lookaside Buffer -->
+            <div class="tlb-section flex-grow-1 greenbg">
+
+            </div>
+
+            <!-- Page/Segment Table -->
+            <div class="ptable-section flex-grow-1 yellowbg">
+
+            </div>
+
+            <!-- Memory (Both Main and Secondary) -->
+            <div class="memory-section flex-grow-2 redbg flex-container flex-column">
+
+            </div>
+
+            <!-- Page Cache
+            <div class="page-cache-section flex-grow-1 bluebg">
+
+            </div>
+          -->
+
+          </div>
 
         </div>
-
       </div>
 
     </div>
 
-    <!-- sidebar script -->
-    <script src="../js/sidebar.js"></script>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <!-- Anime js  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha512-z4OUqw38qNLpn1libAN9BsoDx6nbNFio5lA6CuTp9NlK83b89hgyCVq+N5FdBJptINztxn1Z3SaKSKUS5UP60Q==" crossorigin="anonymous"></script>
+
+    <!-- Our scripts -->
+    <script src="../js/sidebar.js"></script>
+    <script src="../js/main.js"></script>
+
   </body>
 </html>
