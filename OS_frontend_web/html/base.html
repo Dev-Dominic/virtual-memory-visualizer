@@ -47,10 +47,10 @@
 
                 <div class="btn-group btn-group-toggle flex-container flex-column" data-toggle="buttons">
                   <label class="btn btn-secondary dropdown-items active">
-                    <input type="radio" name="options" id="option2" autocomplete="off"> Paging
+                    <input type="radio" name="paging" id="paging" autocomplete="off"> Paging
                   </label>
                   <label class="btn btn-secondary dropdown-items">
-                    <input type="radio" name="options" id="option3" autocomplete="off"> Segmentation
+                    <input type="radio" name="segmentation" id="segmentation" autocomplete="off"> Segmentation
                   </label>
                 </div>
 
@@ -64,16 +64,16 @@
               <div class="dropdown-container">
                 <div class="btn-group btn-group-toggle flex-container flex-column" data-toggle="buttons">
                   <label class="btn btn-secondary dropdown-items active">
-                    <input type="radio" name="options" id="option2" autocomplete="off"> OPT
+                    <input type="radio" name="opt" id="opt" autocomplete="off"> OPT
                   </label>
                   <label class="btn btn-secondary dropdown-items">
-                    <input type="radio" name="options" id="option3" autocomplete="off"> LRU
+                    <input type="radio" name="lru" id="lru" autocomplete="off"> LRU
                   </label>
                   <label class="btn btn-secondary dropdown-items">
-                    <input type="radio" name="options" id="option2" autocomplete="off"> FIFO
+                    <input type="radio" name="fifo" id="fifo" autocomplete="off"> FIFO
                   </label>
                   <label class="btn btn-secondary dropdown-items">
-                    <input type="radio" name="options" id="option2" autocomplete="off"> CLOCK
+                    <input type="radio" name="clock" id="clock" autocomplete="off"> CLOCK
                   </label>
                 </div>
               </div>
@@ -84,18 +84,46 @@
               </button>
 
               <div class="dropdown-container">
-                <a>Game</a>
-                <a>Spreadsheet</a>
-                <a>Word Processor</a>
+
+                <div class="btn-group-toggle flex-container flex-column" data-toggle="buttons">
+                  <label class="btn btn-secondary dropdown-items active check">
+                    <input type="checkbox" name= "game" checked autocomplete="off"> Game
+                  </label>
+                </div>
+
+                <div class="btn-group-toggle flex-container flex-column" data-toggle="buttons">
+                  <label class="btn btn-secondary dropdown-items check">
+                    <input type="checkbox" name= "word_processor" checked autocomplete="off"> Word Processor
+                  </label>
+                </div>
+
+                <div class="btn-group-toggle flex-container flex-column" data-toggle="buttons">
+                  <label class="btn btn-secondary dropdown-items check">
+                    <input type="checkbox" name= "spreadsheet" checked autocomplete="off"> Spreadsheet
+                  </label>
+                </div>
+
+                <div class="btn-group-toggle flex-container flex-column" data-toggle="buttons">
+                  <label class="btn btn-secondary dropdown-items check">
+                    <input type="checkbox" name= "browser" checked autocomplete="off"> Browser
+                  </label>
+                </div>
+
               </div>
 
               <!-- Active Programs List -->
-              <button class="dropdown-btn caret">Active Programs
+              <button class="dropdown-btn caret">Processes
                 <i class="fa fa-caret-down"></i>
               </button>
 
               <div class="dropdown-container">
-                <a>Game</a>
+                <div class="flex-container center">
+                  <p class="process-number">0</p>
+                </div>
+                <div class="flex-container center">
+                  <button type="button" class="btn btn-secondary button-add-process btn-sm">Add</button>
+                  <button type="button" class="btn btn-danger button-remove-process btn-sm">Remove</button>
+                </div>
               </div>
 
               <!-- Run Configuration button -->
@@ -111,34 +139,84 @@
         <!-- Workspace Container -->
         <div class="flex-container workspace-container flex-column">
 
-          <!-- Area designated for user feedback -->
-          <div class="feedback-container flex-container">
-
-          </div>
 
           <!-- Rendering Area -->
           <div class="rendering-container flex-container">
 
             <!-- Processes -->
-            <div class="processes-section flex-container flex-grow-1 flex-column center">
-              <div class="process">
+            <div class="flex-container flex-column padding-left-20px flex-grow-1">
+              <div class="feedback1-container center white text-align height-100px width-100px">
+                <p class = "max-width-100 feedback1"></p>
+              </div>
+
+              <div class="processes-section flex-container flex-grow-1 flex-column center">
+                <div class="processes-header white">
+                  <h3>Processes</h3>
+                </div>
+                <div class="process">
+
+                </div>
+              </div>
+            </div>
+
+
+            <!-- Translation Lookaside Buffer -->
+            <div class="flex-container flex-column padding-left-20px flex-grow-1">
+              <div class="feedback2-container flex-conatiner center white text-align height-100px">
+                <p class = "max-width-100 feedback2"></p>
+              </div>
+              <div class="tlb-section flex-container flex-grow-1 flex-column center ">
+                <div class="tlb-header white">
+                  <h3>TLB</h3>
+                </div>
+                <div class="tlb">
+
+                </div>
+              </div>
+            </div>
+
+            <!-- Page/Segment Table -->
+            <div class="flex-container flex-column padding-left-20px flex-grow-1">
+              <div class="feedback3-container flex-conatiner center white text-align height-100px">
+                <p class = "max-width-100 feedback3"></p>
+              </div>
+              <div class="ptable-section flex-container flex-grow-1 flex-column center ">
+                <div class="ptable-header white">
+                  <h3>Page Table</h3>
+                </div>
+                <div class="ptable">
+
+                </div>
 
               </div>
             </div>
 
-            <!-- Translation Lookaside Buffer -->
-            <div class="tlb-section flex-grow-1 greenbg">
-
-            </div>
-
-            <!-- Page/Segment Table -->
-            <div class="ptable-section flex-grow-1 yellowbg">
-
-            </div>
-
             <!-- Memory (Both Main and Secondary) -->
-            <div class="memory-section flex-grow-2 redbg flex-container flex-column">
+            <div class="flex-container flex-column padding-left-20px flex-grow-2">
+              <div class="feedback4-container flex-conatiner center white text-align height-100px">
+                <p class = "max-width-100 feedback4"></p>
+              </div>
+              <div class="memory-section flex-container flex-grow-2 flex-column center space-around">
 
+                <div class="flex-container flex-column center">
+                  <div class="ram-header white">
+                    <h3>RAM</h3>
+                  </div>
+                  <div class="ram">
+
+                  </div>
+                </div>
+
+                <div class="flex-container flex-column center">
+                  <div class="disk-header white">
+                    <h3>Disk</h3>
+                  </div>
+                  <div class="disk">
+
+                  </div>
+                </div>
+
+              </div>
             </div>
 
             <!-- Page Cache
@@ -160,11 +238,16 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <!-- JQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
     <!-- Anime js  -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha512-z4OUqw38qNLpn1libAN9BsoDx6nbNFio5lA6CuTp9NlK83b89hgyCVq+N5FdBJptINztxn1Z3SaKSKUS5UP60Q==" crossorigin="anonymous"></script>
 
     <!-- Our scripts -->
     <script src="../js/sidebar.js"></script>
+    <script src="../js/utils.js"></script>
     <script src="../js/main.js"></script>
 
   </body>
